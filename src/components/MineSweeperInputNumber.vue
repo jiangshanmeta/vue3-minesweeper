@@ -62,7 +62,7 @@ export default defineComponent({
             max,
             step,
         } = toRefs(props);
-        const inputRef = ref(null);
+        const inputRef = ref<HTMLFormElement|null>(null);
         const model = computed<number>({
             get () {
                 return modelValue.value;
@@ -70,8 +70,9 @@ export default defineComponent({
             set (val) {
                 const numberVal = Number(val);
                 if (Number.isNaN(numberVal) || !Number.isInteger(numberVal) || numberVal > max.value || numberVal < min.value) {
-                    // TODO any
-                    (inputRef.value as any).value = modelValue.value;
+                    if(inputRef.value !== null){
+                        inputRef.value.value = modelValue.value;
+                    }
                     return;
                 }
 
