@@ -1,24 +1,13 @@
 # vue3-minesweeper
 
-## Project setup
-```
-npm install
-```
+Vue3实现扫雷游戏
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+游戏界面参考Ubuntu19.04自带的扫雷
 
-### Compiles and minifies for production
-```
-npm run build
-```
+## 相关链接
 
-### Lints and fixes files
-```
-npm run lint
-```
+[试玩链接](https://jiangshanmeta.github.io/vue3-minesweeper/)
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+[Vue2实现扫雷游戏](https://github.com/jiangshanmeta/mineSweeper-vue)
+
+[React实现扫雷游戏](https://github.com/jiangshanmeta/minesweeper-react)

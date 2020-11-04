@@ -1,7 +1,7 @@
 <template>
     <div class="game-container">
-        <div 
-            class="mine-sweeper-container" 
+        <div
+            class="mine-sweeper-container"
             @contextmenu.prevent
         >
             <div
@@ -79,7 +79,7 @@ import {
     nextTick,
 } from 'vue';
 
-function shuffle<T> (mines:T[], start=0) {
+function shuffle<T> (mines: T[], start = 0) {
     for (let i = start; i < mines.length; i++) {
         const randomIndex = Math.floor(Math.random() * (i + 1));
         const tmp = mines[randomIndex];
@@ -125,27 +125,26 @@ export default defineComponent({
         const markStatus = ref<number[]>([]);
         const selectedMineCount = ref(0);
 
-        function init(width:number, height:number, mineCount:number){
+        function init (width: number, height: number, mineCount: number) {
             isEnd.value = false;
-            const total = width*height;
-            const minesValue:number[] = new Array(total).fill(0);
+            const total = width * height;
+            const minesValue: number[] = new Array(total).fill(0);
             for (let i = 0; i < mineCount; i++) {
                 minesValue[i] = 1;
             }
             shuffle(minesValue, mineCount);
-            mines.value = minesValue
+            mines.value = minesValue;
             openStatus.value = new Array(total).fill(0);
             markStatus.value = new Array(total).fill(0);
             selectedMineCount.value = 0;
         }
 
-        function reStart(){
-            init(width.value,height.value,mineCount.value)
+        function reStart () {
+            init(width.value, height.value, mineCount.value);
         }
 
-
-        const neighbourMineCount = computed(()=>{
-            const result:number[] = new Array(width.value * height.value).fill(0);
+        const neighbourMineCount = computed(() => {
+            const result: number[] = new Array(width.value * height.value).fill(0);
             for (let i = 0; i < result.length; i++) {
                 if (!mines.value[i]) {
                     continue;
@@ -167,9 +166,28 @@ export default defineComponent({
                 }
             }
             return result;
-        })
+        });
 
-        function handleLeftClick(x:number,y:number){
+        function floodfill (x: number, y: number) {
+            if (x < 0 || y < 0 || x === height.value || y === width.value) {
+                return;
+            }
+            const index = x * width.value + y;
+            if (openStatus.value[index] === 1) {
+                return;
+            }
+            openStatus.value.splice(index, 1, 1);
+            if (neighbourMineCount.value[index] > 0) {
+                return;
+            }
+            for (let i = -1; i < 2; i++) {
+                for (let j = -1; j < 2; j++) {
+                    floodfill(x + i, y + j);
+                }
+            }
+        }
+
+        function handleLeftClick (x: number, y: number) {
             if (isEnd.value) {
                 return;
             }
@@ -192,27 +210,7 @@ export default defineComponent({
             floodfill(x, y);
         }
 
-
-        function floodfill(x:number,y:number){
-           if (x < 0 || y < 0 || x === height.value || y === width.value) {
-                return;
-            }
-            const index = x * width.value + y;
-            if (openStatus.value[index] === 1) {
-                return;
-            }
-            openStatus.value.splice(index, 1, 1);
-            if (neighbourMineCount.value[index] > 0) {
-                return;
-            }
-            for (let i = -1; i < 2; i++) {
-                for (let j = -1; j < 2; j++) {
-                    floodfill(x + i, y + j);
-                }
-            }
-        }
-
-        function handleRightClick(x:number,y:number){
+        function handleRightClick (x: number, y: number) {
             if (isEnd.value) {
                 return;
             }
@@ -228,19 +226,17 @@ export default defineComponent({
             }
         }
 
-
-
         watch(() => play.value, (play) => {
             if (!play) {
                 return;
             }
 
-            init(width.value, height.value, mineCount.value)
+            init(width.value, height.value, mineCount.value);
         });
 
-        watch(()=>selectedMineCount.value,(selectedMineCount)=>{
-            if(selectedMineCount !== mineCount.value){
-                return
+        watch(() => selectedMineCount.value, (selectedMineCount) => {
+            if (selectedMineCount !== mineCount.value) {
+                return;
             }
 
             const match = mines.value.every((isMine, index) => {
@@ -256,8 +252,7 @@ export default defineComponent({
                 });
                 isEnd.value = true;
             }
-
-        })
+        });
 
         return {
             isEnd,
@@ -271,7 +266,7 @@ export default defineComponent({
             reStart,
             handleLeftClick,
             handleRightClick,
-        }
+        };
     },
 });
 </script>
